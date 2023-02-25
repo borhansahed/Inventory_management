@@ -1,37 +1,40 @@
 const express = require('express');
 require('dotenv').config()
 const publicRoute = require('./routes/publicRouter');
+const addProduct = require('./routes/addProduct')
 const userRoute = require("./routes/userRoute");
 const notFound = require("./routes/notFound");
+const orderRoute = require('./routes/order');
+const { client } = require('./database/connectMongo');
 const connectMongoDB = require('./database/connectMongo').connectMongoDB
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(express.json())
 
-// public Route
+async function run (){
+
+    try{
+
+        // public Route
 app.use('/', publicRoute)
 
+// product route
+app.use('/addproduct', addProduct);
 // user Route 
 app.use("/user", userRoute);
-// app.post('/user', async(req,res) =>{
-//     const user = req.body;
-//     console.log(user);
-//     res.send(user);
-// })
+
+app.use('/order', orderRoute)
 
 // notFound Route
 app.use("*", notFound);
-// mongoDB connection
+    }
+    finally{
+        client.close()
+    }
 
-// const connectMongoDB = async () =>{
-//    try{
-    
 
-//    }catch(err){
-
-//    }
-// }
-
+}
+run().catch(console.dir)
 app.listen(PORT, () =>{
     console.log(`Server is running on ${PORT}`);
     connectMongoDB()

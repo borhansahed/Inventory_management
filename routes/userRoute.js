@@ -1,17 +1,17 @@
 const express = require('express');
 const userRoute = express.Router();
-const userCollection = require('../database/collections')
+const userCollection = require('../database/collections').userCollection
 
 
 
 userRoute.get('/', async (req, res) =>{
-  const result = await userCollection.find({}).toArray();
-  res.send(result);
+  // const result = await userCollection.find({}).toArray();
+  res.send("You have to signIn or login");
 })
 
 
 userRoute.post('/login', async (req,res) =>{
-  const {email, password, name} = req.body;
+  const {email, password} = req.body;
    
   const userEmail = await userCollection.findOne({email:email})
   const userPassword = await userCollection.findOne({password:password});
