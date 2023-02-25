@@ -1,20 +1,42 @@
 const express = require('express');
 const userRoute = express.Router();
+const userCollection = require('../database/collections')
 
-const user = false;
 
-const userMiddleWare = (req, res, next) =>{
-    if(user){
-      return  next();
-    }
-   return res.send("You have to login")
-}
-userRoute.use(userMiddleWare)
 
-userRoute.get('/', (req,res) =>{
-    res.send("Login");
+userRoute.get('/', async (req, res) =>{
+  const result = await userCollection.find({}).toArray();
+  res.send(result);
 })
 
+
+userRoute.post('/login', async (req,res) =>{
+  const {email, password, name} = req.body;
+   
+  const userEmail = await userCollection.findOne({email:email})
+  const userPassword = await userCollection.findOne({password:password});
+    if(!userEmail){
+     return  res.status(404).json("User Email not Found");
+    }
+    if(!userPassword ){
+      return  res.status(404).json(" Password  not Matched");
+    }
+
+    res.redirect('/');
+
+})
+userRoute.post('/signin', async (req,res) =>{
+  const {email, password} = req.body;
+   
+  const userEmail = await userCollection.findOne({email:email})
+  const userPassword = await userCollection.findOne({password:password});
+    if(userEmail && userPassword){
+     return  res.status(200).json("Already sign in");
+    }
+   
+     await userCollection.insertOne(req.body);
+     res.json({message:"Successfully sign in"})
+})
 
 
 module.exports = userRoute;
