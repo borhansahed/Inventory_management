@@ -12,7 +12,7 @@ userRoute.get('/', async (req, res) =>{
 
 userRoute.post('/login', async (req,res) =>{
   const {email, password} = req.body;
-   
+  
   const userEmail = await userCollection.findOne({email:email})
   const userPassword = await userCollection.findOne({password:password});
     if(!userEmail){
