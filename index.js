@@ -1,41 +1,39 @@
-const express = require('express');
-require('dotenv').config()
-const publicRoute = require('./routes/publicRouter');
-const addProduct = require('./routes/addProduct')
+const express = require("express");
+require("dotenv").config();
+const publicRoute = require("./routes/publicRouter");
+const addProduct = require("./routes/addProduct");
 const userRoute = require("./routes/userRoute");
 const notFound = require("./routes/notFound");
-const orderRoute = require('./routes/order');
-const { client } = require('./database/connectMongo');
-const connectMongoDB = require('./database/connectMongo').connectMongoDB
+const orderRoute = require("./routes/order");
+const { client } = require("./database/connectMongo");
+const adminRoute = require("./routes/admin");
+const connectMongoDB = require("./database/connectMongo").connectMongoDB;
 const app = express();
 const PORT = process.env.PORT || 5000;
-app.use(express.json())
+app.use(express.json());
 
-async function run (){
+async function run() {
+  try {
+    // admin Route
+    app.use("/admin", adminRoute);
+    // public Route
+    app.use("/", publicRoute);
 
-    try{
+    // product route
+    app.use("/addproduct", addProduct);
+    // user Route
+    app.use("/user", userRoute);
 
-        // public Route
-app.use('/', publicRoute)
+    app.use("/order", orderRoute);
 
-// product route
-app.use('/addproduct', addProduct);
-// user Route 
-app.use("/user", userRoute);
-
-app.use('/order', orderRoute)
-
-// notFound Route
-app.use("*", notFound);
-    }
-    finally{
-        client.close()
-    }
-
-
+    // notFound Route
+    app.use("*", notFound);
+  } finally {
+    client.close();
+  }
 }
-run().catch(console.dir)
-app.listen(PORT, () =>{
-    console.log(`Server is running on ${PORT}`);
-    connectMongoDB()
-})
+run().catch(console.dir);
+app.listen(PORT, () => {
+  console.log(`Server is running on ${PORT}`);
+  connectMongoDB();
+});
