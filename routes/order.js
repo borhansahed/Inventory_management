@@ -10,8 +10,8 @@ const orderMiddleware = require("../middleware/orderMiddleware");
 try{
 
   orderRoute.get("/", async (req, res) => {
-    const result = await orderCollection.find({}).toArray();
-    res.send(result);
+    
+    res.json({massage: "Add your email to check you order list"});
   });
   
   // get user individual order
